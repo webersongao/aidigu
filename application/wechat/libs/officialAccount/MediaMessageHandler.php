@@ -142,6 +142,6 @@ class MediaMessageHandler
         $userInfo = User::info($openId);
         // // 检查用户并登录
         User::checkUser(json_decode(json_encode($userInfo), true), $message['EventKey']);
-        return '欢迎关注爱嘀咕~';
+        return '欢迎关注凯迪~';
     }
 }
