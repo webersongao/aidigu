@@ -197,22 +197,10 @@ login		: false,
 				chat.doLogin( name , email );
 			}
 			*/
-			var messageChatId = $("#messageChatId").val()
-			var channelMessageChatId = $("#channelMessageChatId").val()
-			var privateToUid = $("#privateToUid").val()
-			if (messageChatId) {
-				$("#sub-menu-pannel").hide();
-				$("#menu-pannel").hide();
-				chat.messageChat(messageChatId, privateToUid)
-			} else if (channelMessageChatId) {
-				$("#sub-menu-pannel").hide();
-				$("#menu-pannel").hide();
-				chat.channelMessageChat(channelMessageChatId, privateToUid)
-			} else if (privateToUid) {
-				$("#sub-menu-pannel").hide();
-				$("#menu-pannel").hide();
-				chat.privateChat(privateToUid)
-			}
+			chat.data.uid = $("#fromuid").val()
+			// 初始化
+			var json = {"type": 0, "listtagid": 'TagInfo', "uid": chat.data.uid};
+			chat.wsSend(JSON.stringify(json));
 		}
 	},
 	sendMedia: function(data) {
@@ -420,6 +408,23 @@ d.data[index].listtagid = d.listtagid
 					$("#sub-menu-pannel").css('display', 'none')
 					$("#content-pannel").show();
 				}
+		}
+
+		var messageChatId = $("#messageChatId").val()
+		var channelMessageChatId = $("#channelMessageChatId").val()
+		var privateToUid = $("#privateToUid").val()
+		if (messageChatId) {
+			$("#sub-menu-pannel").hide();
+			$("#menu-pannel").hide();
+			chat.messageChat(messageChatId, privateToUid)
+		} else if (channelMessageChatId) {
+			$("#sub-menu-pannel").hide();
+			$("#menu-pannel").hide();
+			chat.channelMessageChat(channelMessageChatId, privateToUid)
+		} else if (privateToUid) {
+			$("#sub-menu-pannel").hide();
+			$("#menu-pannel").hide();
+			chat.privateChat(privateToUid)
 		}
 	},
 	/**

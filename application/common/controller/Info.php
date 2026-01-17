@@ -44,7 +44,7 @@ class Info extends Base
     	$this->setMyConcern($this->siteUserId, $this->userid);
 		// $this->assign('siteUserId', $this->siteUserId);
 		$this->assign('action', request()->action());
-		$this->assign('chatRemind', \app\common\libs\Remind::checkAll($this->userid));
+		$this->assign('checkRemind', \app\common\libs\Remind::checkAll($this->userid));
 		$this->assign('loginUserInfo', $this->loginUserInfo);
 	}
 	protected function getSiteUserInfo($userid) 
@@ -113,9 +113,9 @@ class Info extends Base
 	{
 		Reminder::where('touid', $this->userid)->where('msg_id', $msgId)->update(['status' => 1]);
 		$userMessage[0] = Message::getMessageById($msgId);
-		$messageBlock = $userMessage[0]->comments()->where('msg_id',$msgId)->with('User')->order('ctime','desc')->paginate(20);
+		// $messageBlock = $userMessage[0]->comments()->where('msg_id',$msgId)->with('User')->order('ctime','desc')->paginate(20);
 		$this->assign('userMessage', handleMessage($userMessage));
-		$this->assign('messageBlock', $messageBlock);
+		// $this->assign('messageBlock', $messageBlock);
 
 	}
 	protected function getReminderMsg($userid = '', $count=20)
