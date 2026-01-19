@@ -3,6 +3,7 @@ namespace app\admin\controller;
 use think\facade\Request;
 use think\facade\Validate;
 use app\common\model\App as AppModel;
+use DateRangeError;
 
 class App extends Base
 {
@@ -26,9 +27,12 @@ class App extends Base
         $keyword = Request::param('keyword', '');
         $app_status = Request::param('app_status', '');
         $app_type = Request::param('app_type', '');
+        $fromuid = Request::param('fromuid', 0, 'intval');
         
         // 构建查询条件
         $where = [];
+
+        $where['fromuid'] = $fromuid;
         
         if (!empty($keyword)) {
             $where[] = ['app_name|app_url', 'like', '%' . $keyword . '%'];
@@ -77,7 +81,7 @@ class App extends Base
             // 验证表单数据
             $validate = Validate::rule([
                 'app_name' => 'require|max:255',
-                'app_url' => 'require|max:255|url',
+                'app_url' => 'require|max:255',
                 'app_image' => 'require|max:255',
                 'app_status' => 'require|in:0,1,2',
                 'app_type' => 'require|in:0,1,2',
@@ -89,15 +93,17 @@ class App extends Base
             }
             
             // 设置创建者
-            $data['fromuid'] = session('admin.uid', 0);
+            $data['fromuid'] = (int)$data['fromuid'] ?: 0;
+            $data['create_time'] = date('Y-m-d H:i:s');
+            $data['update_time'] = date('Y-m-d H:i:s');
             
             // 如果app_config为空，设置为默认值
             if (empty($data['app_config'])) {
                 $data['app_config'] = '{}';
             }
             
-            // 创建应用
-            $app = new App();
+            // 创建应用 - 修复此处的错误，使用正确的模型类
+            $app = new AppModel();
             $result = $app->allowField(true)->save($data);
             
             if ($result) {
@@ -143,7 +149,7 @@ class App extends Base
             // 验证表单数据
             $validate = Validate::rule([
                 'app_name' => 'require|max:255',
-                'app_url' => 'require|max:255|url',
+                'app_url' => 'require|max:255',
                 'app_image' => 'require|max:255',
                 'app_status' => 'require|in:0,1,2',
                 'app_type' => 'require|in:0,1,2',
@@ -153,6 +159,10 @@ class App extends Base
             if (!$validate->check($data)) {
                 $this->error($validate->getError());
             }
+
+            // 设置创建者
+            $data['fromuid'] = (int)$data['fromuid'] ?: 0;
+            $data['update_time'] = date('Y-m-d H:i:s');
             
             // 如果app_config为空，设置为默认值
             if (empty($data['app_config'])) {
